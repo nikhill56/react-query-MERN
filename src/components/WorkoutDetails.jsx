@@ -12,9 +12,9 @@ const WorkoutDetails = ({ workout }) => {
 
     //! REACT QUERY
 
-    const json = await response.json();
+    
     if (!response.ok) {
-      console.log("Fuck you sumedh");
+      console.log("Error");
     }
     if (response.ok) {
       queryClient.invalidateQueries("workoutData");
