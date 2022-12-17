@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useMutation ,useQueryClient} from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 const WorkoutForm = () => {
-    const queryClient=useQueryClient();
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState("");
   const [load, setLoad] = useState("");
   const [reps, setReps] = useState("");
   const [errors, setErrors] = useState(null);
+  const [emptyFields, setEmptyFields] = useState([]);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -23,16 +24,18 @@ const WorkoutForm = () => {
     const json = await response.json();
     if (!response.ok) {
       setErrors(json.error);
+      setEmptyFields(json.emptyFields);
     }
     if (response.ok) {
       setTitle("");
       setLoad("");
       setReps("");
       setErrors(null);
-      queryClient.invalidateQueries('workoutData')
+      console.log("new workout added", json);
+      queryClient.invalidateQueries("workoutData");
     }
   };
-  const { isError, isLoading, error, mutate } = useMutation(() =>
+  const { error } = useMutation(() =>
     fetch("/api/workouts", {
       method: "POST",
       body: { title, load, reps },
@@ -43,10 +46,7 @@ const WorkoutForm = () => {
   );
   return (
     <div className="">
-      <form
-        className="create"
-        onSubmit={handleSubmit}
-      >
+      <form className="create" onSubmit={handleSubmit}>
         <h3>Add A New Workout</h3>
         <label>Exercise Title:</label>
         <input
@@ -55,6 +55,7 @@ const WorkoutForm = () => {
             setTitle(e.target.value);
           }}
           value={title}
+          className={emptyFields.includes("title") ? "error" : ""}
         />
         <label>Load (in kg):</label>
         <input
@@ -63,6 +64,7 @@ const WorkoutForm = () => {
             setLoad(e.target.value);
           }}
           value={load}
+          className={emptyFields.includes("load") ? "error" : ""}
         />
         <label>Reps (in kg):</label>
         <input
@@ -71,9 +73,10 @@ const WorkoutForm = () => {
             setReps(e.target.value);
           }}
           value={reps}
+          className={emptyFields.includes("reps") ? "error" : ""}
         />
         <button type="submit">Add Workout</button>
-        {error && <div className="error">{error} </div>}
+        {(error || errors) && <div className="error">{errors} </div>}
       </form>
     </div>
   );

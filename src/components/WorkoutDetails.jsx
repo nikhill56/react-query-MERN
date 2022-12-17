@@ -1,5 +1,7 @@
 import React from "react";
 import { useQueryClient } from "react-query";
+
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 const WorkoutDetails = ({ workout }) => {
   //! REACT QUERY
   const queryClient = useQueryClient();
@@ -12,7 +14,6 @@ const WorkoutDetails = ({ workout }) => {
 
     //! REACT QUERY
 
-    
     if (!response.ok) {
       console.log("Error");
     }
@@ -33,8 +34,10 @@ const WorkoutDetails = ({ workout }) => {
         {"  "}
         {workout.reps}
       </p>
-      <p className="text-xl">{workout.createdAt}</p>
-      <span onClick={handleClick}>delete</span>
+      <p className="text-xl">
+        {formatDistanceToNow(new Date(workout.createdAt), { addSuffix: true })}
+      </p>
+      <span onClick={handleClick}>Delete</span>
     </div>
   );
 };
