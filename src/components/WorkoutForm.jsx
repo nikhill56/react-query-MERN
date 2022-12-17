@@ -1,11 +1,12 @@
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 import React, { useState } from "react";
-import { useMutation ,useQueryClient} from "react-query";
+
 const WorkoutForm = () => {
-    const queryClient=useQueryClient();
+  const { dispatch } = useWorkoutsContext();
   const [title, setTitle] = useState("");
   const [load, setLoad] = useState("");
   const [reps, setReps] = useState("");
-  const [errors, setErrors] = useState(null);
+  const [error, setError] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -18,35 +19,22 @@ const WorkoutForm = () => {
       },
     });
 
-    //! REACT QUERY
-
     const json = await response.json();
     if (!response.ok) {
-      setErrors(json.error);
+      setError(json.error);
     }
     if (response.ok) {
       setTitle("");
       setLoad("");
       setReps("");
-      setErrors(null);
-      queryClient.invalidateQueries('workoutData')
+      setError(null);
+      dispatch({ type: "CREATE_WORKOUT", payload: json });
     }
   };
-  const { isError, isLoading, error, mutate } = useMutation(() =>
-    fetch("/api/workouts", {
-      method: "POST",
-      body: { title, load, reps },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-  );
+
   return (
     <div className="">
-      <form
-        className="create"
-        onSubmit={handleSubmit}
-      >
+      <form className="create" onSubmit={handleSubmit}>
         <h3>Add A New Workout</h3>
         <label>Exercise Title:</label>
         <input

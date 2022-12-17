@@ -1,23 +1,16 @@
 import React from "react";
-import { useQueryClient } from "react-query";
-const WorkoutDetails = ({ workout }) => {
-  //! REACT QUERY
-  const queryClient = useQueryClient();
-  const handleClick = async (e) => {
-    e.preventDefault();
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 
-    const response = await fetch("/api/workouts/" + workout._id, {
+const WorkoutDetails = ({ workout }) => {
+  const { dispatch } = useWorkoutsContext();
+  const handleClick = async () => {
+    const response = await fetch("/api/workouts" + workout._id, {
       method: "DELETE",
     });
+    const json = await response.json();
 
-    //! REACT QUERY
-
-    
-    if (!response.ok) {
-      console.log("Error");
-    }
     if (response.ok) {
-      queryClient.invalidateQueries("workoutData");
+      dispatch({ type: "DELETE_WORKOUT", payload: json });
     }
   };
   return (
@@ -34,7 +27,7 @@ const WorkoutDetails = ({ workout }) => {
         {workout.reps}
       </p>
       <p className="text-xl">{workout.createdAt}</p>
-      <span onClick={handleClick}>delete</span>
+      <span onClick={handleClick}>Delete</span>
     </div>
   );
 };
