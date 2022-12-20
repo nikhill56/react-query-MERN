@@ -5,7 +5,7 @@ module.exports = function (app) {
     createProxyMiddleware({
       target: "https://workoutbuddy-gesw.onrender.com",
       changeOrigin: true,
-      secure: false,
+      secure: true,
     })
   );
 };
