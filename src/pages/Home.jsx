@@ -8,7 +8,7 @@ const Home = () => {
   const { isLoading, error, data } = useQuery(
     "workoutData",
     () =>
-      fetch("http://localhost:5000/api/workouts", {
+      fetch(`${process.env.REACT_APP_SERVER}/api/workouts`, {
         headers: {
           'Authorization': `Bearer ${user.token}`,
         },

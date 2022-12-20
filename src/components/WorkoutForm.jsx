@@ -17,7 +17,7 @@ const WorkoutForm = () => {
       return;
     }
     const workout = { title, load, reps };
-    const response = await fetch("/api/workouts", {
+    const response = await fetch(`${process.env.REACT_APP_SERVER}/api/workouts`, {
       method: "POST",
       body: JSON.stringify(workout),
       headers: {
@@ -43,7 +43,7 @@ const WorkoutForm = () => {
     }
   };
   const { error } = useMutation(() =>
-    fetch("/api/workouts", {
+    fetch(`${process.env.REACT_APP_SERVER}/api/workouts`, {
       method: "POST",
       body: { title, load, reps },
       headers: {
